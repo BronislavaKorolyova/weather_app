@@ -1,0 +1,38 @@
+services:
+  app1:
+    image: my-app:latest
+    container_name: app1
+    expose:
+      - '5000'  # Expose Flask app internally
+    environment:
+      - APP_INSTANCE=1
+    networks:
+      - app_network
+
+  app2:
+    image: my-app:latest
+    container_name: app2
+    expose:
+      - '5000'  # Expose Flask app internally
+    environment:
+      - APP_INSTANCE=2
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - '8080:80'  # Expose only public Nginx 
+    volumes:
+      - ./nginx_ex_27.conf:/etc/nginx/nginx.conf:ro  # Mount custom config
+    depends_on:
+      - app1
+      - app2
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+

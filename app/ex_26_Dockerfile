@@ -1,0 +1,17 @@
+# Dockerfile
+
+FROM python:3.11-slim-buster
+
+# Copy requirements.txt to the container
+COPY requirements.txt .
+
+# Install dependencies globally (no venv)
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the app files into the container
+COPY . .
+
+# Define the command to start the Flask app using system Python
+CMD ["python", "main.py"]
+

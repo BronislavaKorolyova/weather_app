@@ -1,0 +1,25 @@
+services:
+  app1:
+    image: my-flask-app:latest
+    container_name: app1
+    ports:
+      - '8080:80'
+    environment:
+      - APP_INSTANCE=1
+    networks:
+      - app_network
+
+  app2:
+    image: my-flask-app:latest
+    container_name: app2
+    ports:
+      - '8081:80'
+    environment:
+      - APP_INSTANCE=2
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+

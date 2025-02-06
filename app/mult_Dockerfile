@@ -1,0 +1,31 @@
+# Stage 1: Build and test
+FROM python:3.11-slim-buster AS builder
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN python -m venv /app/venv \
+    && /app/venv/bin/pip install --upgrade pip \
+    && /app/venv/bin/pip install --no-cache-dir -r requirements.txt \
+    && /app/venv/bin/pip install --no-cache-dir pytest
+
+COPY . .
+
+# Run tests
+RUN /app/venv/bin/python -m pytest tests/
+
+# Stage 2: Production image
+FROM python:3.11-slim-buster AS runtime
+
+WORKDIR /app
+
+COPY --from=builder /app/venv /app/venv
+COPY --from=builder /app .
+
+RUN rm -rf tests/ requirements.txt
+
+ENV PATH="/app/venv/bin:$PATH"
+
+CMD ["/app/venv/bin/python", "main.py"]
+
